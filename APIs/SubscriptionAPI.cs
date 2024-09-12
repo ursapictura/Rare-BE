@@ -1,6 +1,6 @@
-namespace Rare.APIs
+﻿namespace Rare.APIs
 {
-    public class TagAPI
+    public class SubscriptionAPI
     {
         public static void Map(WebApplication app)
         {
