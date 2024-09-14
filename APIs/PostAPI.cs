@@ -152,6 +152,49 @@ namespace Rare.APIs
                 return Results.NoContent();
             });
 
+            // get posts by category id
+            app.MapGet("/posts/categories/{categoryId}", (RareDbContext db, int categoryId) =>
+            {
+                var postByCategory = db.Posts
+                .Where(p => p.Category.Id == categoryId)
+                .Select(post => new
+                {
+                    post.Id,
+                    post.Title,
+                    post.Content,
+                    post.Category,
+                    post.ImageURL,
+                    post.PublicationDate,
+                    Author = new
+                    {
+                        post.Author.Id,
+                        post.Author.FirstName,
+                        post.Author.LastName,
+                        post.Author.ImageURL
+                    }
+                })
+                .OrderByDescending(post => post.PublicationDate)
+                .ToList();
+
+                if (postByCategory.Any())
+                {
+                    return Results.Ok(postByCategory);
+                }
+                else
+                {
+                    bool categoryExist = db.Categories.Any(c => c.Id == categoryId);
+                    if (categoryExist)
+                    {
+                        return Results.Ok($"There are no post for this category with an id of {categoryId}");
+
+                    }
+                    else
+                    {
+                        return Results.NotFound($"There is no category with an id of {categoryId}");
+                    }
+                }
+            });
+
             // search posts
             app.MapGet("/posts/search", (RareDbContext db, string searchValue) =>
             {
@@ -185,6 +228,7 @@ namespace Rare.APIs
 
                 return searchResults.Any() ? Results.Ok(searchResults) : Results.StatusCode(204);
             });
+                   
         }
     }
 }
