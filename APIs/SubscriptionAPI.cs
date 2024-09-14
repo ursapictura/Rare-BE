@@ -12,7 +12,7 @@ namespace Rare.APIs
             {
                 // Get all subscriptions that match FollowerId. Then 
                 var subList = db.Subscriptions
-                    .Where(s => s.FollowerId == userId)
+                    .Where(s => s.FollowerId == userId && s.EndedOn == null)
                     .Select(s => s.AuthorId)
                     .ToList();
 
