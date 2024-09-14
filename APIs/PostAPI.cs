@@ -32,7 +32,7 @@ namespace Rare.APIs
             });
 
             // get single post + post details
-            app.MapGet("/posts/{id}", (RareDbContext db, int id) =>
+            app.MapGet("/posts/{postId}", (RareDbContext db, int postId) =>
             {
                 Post post = db.Posts
                     .Include(post => post.Category)
@@ -40,7 +40,7 @@ namespace Rare.APIs
                     .Include(post => post.Tags)
                     .Include(post => post.Comments)
                     .ThenInclude(comment => comment.Author)
-                    .SingleOrDefault(post => post.Id == id);
+                    .SingleOrDefault(post => post.Id == postId);
 
                 if (post == null)
                 {
@@ -110,9 +110,9 @@ namespace Rare.APIs
             });
 
             // update post
-            app.MapPut("/posts/{id}", (RareDbContext db, int id, Post post) =>
+            app.MapPut("/posts/{postId}", (RareDbContext db, int postId, Post post) =>
             {
-                Post postToUpdate = db.Posts.SingleOrDefault(post => post.Id == id);
+                Post postToUpdate = db.Posts.SingleOrDefault(post => post.Id == postId);
 
                 if (postToUpdate == null)
                 {
@@ -138,9 +138,9 @@ namespace Rare.APIs
             });
 
             // delete post
-            app.MapDelete("/posts/{id}", (RareDbContext db, int id) =>
+            app.MapDelete("/posts/{postId}", (RareDbContext db, int postId) =>
             {
-                Post post = db.Posts.SingleOrDefault(post => post.Id == id);
+                Post post = db.Posts.SingleOrDefault(post => post.Id == postId);
 
                 if (post == null)
                 {

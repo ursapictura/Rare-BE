@@ -17,7 +17,7 @@ namespace Rare.APIs
 
             app.MapPost("/tags", (RareDbContext db, Tag addTag) =>
             {
-                if (db.Tags.Any(t => t.Label == addTag.Label))
+                if (db.Tags.Any(t => t.Label.ToLower() == addTag.Label.ToLower()))
                 {
                     return Results.Ok("Tag already exists");
                 }
