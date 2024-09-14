@@ -4,6 +4,7 @@ namespace Rare.APIs
     {
         public static void Map(WebApplication app)
         {
+            // get all categories
             app.MapGet("/categories", (RareDbContext db) =>
             {
                 var allCategories = db.Categories.ToList();

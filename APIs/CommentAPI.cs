@@ -8,6 +8,7 @@ namespace Rare.APIs
     {
         public static void Map(WebApplication app)
         {
+            //get all commments related to a single post
             app.MapGet("/comments/posts/{postId}", (RareDbContext db, int postId) =>
             {
                 var allComments = db.Comments
@@ -49,6 +50,7 @@ namespace Rare.APIs
                 }
             });
 
+            // create a comment
             app.MapPost("/comments", (RareDbContext db, Comment newComment) =>
             {
                 Comment addComment = new()
@@ -65,7 +67,8 @@ namespace Rare.APIs
                 return Results.Ok(addComment);
             });
 
-            app.MapDelete("/comments/{commentId}", (RareDbContext db, int addComment) =>
+            //delete a comment
+            app.MapDelete("/comments/{commentId}", (RareDbContext db, int commentId) =>
             {
                 Comment removeComment = db.Comments.SingleOrDefault(c => c.Id == commentId);
                 if (removeComment != null)
