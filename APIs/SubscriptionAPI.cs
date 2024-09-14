@@ -83,7 +83,7 @@ namespace Rare.APIs
             });
 
             // End a User's subscription
-            app.MapPatch("/subscriptions/{userId}/end/{authorId}", (RareDbContext db, int authorId, int userId) =>
+            app.MapPatch("/subscription/{userId}/end/{authorId}", (RareDbContext db, int authorId, int userId) =>
             {
                 // Find User's active subscription to author.
                 var subscription = db.Subscriptions.SingleOrDefault(s => s.AuthorId == authorId
