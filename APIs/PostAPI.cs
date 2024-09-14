@@ -153,10 +153,10 @@ namespace Rare.APIs
             });
 
             // get posts by category id
-            app.MapGet("/posts/{categoryId}", (RareDbContext db, int categoryId) =>
+            app.MapGet("/posts/categories/{categoryId}", (RareDbContext db, int categoryId) =>
             {
                 var postByCategory = db.Posts
-                .Include(p => p.Category)
+                .Where(p => p.Category.Id == categoryId)
                 .Select(post => new
                 {
                     post.Id,
@@ -173,8 +173,6 @@ namespace Rare.APIs
                         post.Author.ImageURL
                     }
                 })
-                .Include(p => p.Author)
-                .Where(p => p.Category.Id == categoryId)
                 .OrderByDescending(post => post.PublicationDate)
                 .ToList();
 
