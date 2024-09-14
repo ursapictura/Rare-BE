@@ -10,28 +10,94 @@ namespace Rare.APIs
             // get all posts
             app.MapGet("/posts", (RareDbContext db) =>
             {
-                return db.Posts.ToList();
+                return db.Posts
+                    .Select(post => new
+                    {
+                        post.Id,
+                        post.Title,
+                        post.Content,
+                        post.Category,
+                        post.ImageURL,
+                        post.PublicationDate,
+                        Author = new
+                        {
+                            post.Author.Id,
+                            post.Author.FirstName,
+                            post.Author.LastName,
+                            post.Author.ImageURL
+                        }
+                    })
+                    .OrderByDescending(post => post.PublicationDate)
+                    .ToList();
             });
 
             // get single post + post details
             app.MapGet("/posts/{id}", (RareDbContext db, int id) =>
             {
-                Post post = db.Posts.SingleOrDefault(post => post.Id == id);
+                Post post = db.Posts
+                    .Include(post => post.Category)
+                    .Include(post => post.Author)
+                    .Include(post => post.Tags)
+                    .Include(post => post.Comments)
+                    .ThenInclude(comment => comment.Author)
+                    .SingleOrDefault(post => post.Id == id);
 
                 if (post == null)
                 {
                     return Results.NotFound();
                 }
 
-                return Results.Ok(post);
+                return Results.Ok(new
+                {
+                    post.Id,
+                    post.Title,
+                    post.Content,
+                    post.Category,
+                    post.ImageURL,
+                    post.PublicationDate,
+                    Author = new
+                    {
+                        post.Author.Id,
+                        post.Author.FirstName,
+                        post.Author.LastName,
+                        post.Author.ImageURL
+                    },
+                    Tags = post.Tags.Select(tag => new
+                    {
+                        tag.Id,
+                        tag.Label
+                    }),
+                    Comments = post.Comments.Select(comment => new
+                    {
+                        comment.Id,
+                        comment.Content,
+                        comment.CreatedOn,
+                        Author = new
+                        {
+                            comment.Author.Id,
+                            comment.Author.FirstName,
+                            comment.Author.LastName,
+                            comment.Author.ImageURL
+                        },
+                    })
+                 });
             });
 
             // create post
             app.MapPost("/posts", (RareDbContext db, Post newPost) =>
             {
-                db.Posts.Add(newPost);
+                Post addPost = new()
+                {
+                    AuthorId = newPost.AuthorId,
+                    CategoryId = newPost.CategoryId,
+                    Title = newPost.Title,
+                    Content = newPost.Content,
+                    PublicationDate = DateTime.Now,
+                    ImageURL = newPost.ImageURL
+                };
+                db.Posts.Add(addPost);
                 db.SaveChanges();
-                return Results.Created($"posts/{newPost.Id}", newPost);
+                return Results.Created($"posts/{addPost.Id}", addPost);
             });
 
             // update post
@@ -73,25 +139,31 @@ namespace Rare.APIs
             app.MapGet("/posts/search", (RareDbContext db, string searchValue) =>
             {
                 var searchResults = db.Posts
-                    .Include(post => post.Category)
                     .Where(post =>
                         post.Title.ToLower().Contains(searchValue.ToLower()) ||
                         post.Content.ToLower().Contains(searchValue.ToLower()) ||
                         post.Category != null && post.Category.Label.ToLower().Contains(searchValue.ToLower()) ||
                         post.Author.FirstName.ToLower().Contains(searchValue.ToLower()) ||
                         post.Author.LastName.ToLower().Contains(searchValue.ToLower()) ||
-                        post.PublicationDate.ToString().Contains(searchValue)
+                        post.PublicationDate.ToString().Contains(searchValue) ||
+                        post.Tags.Any(tag => tag.Label.ToLower().Contains(searchValue.ToLower()))
                     )
-                    .Select(post => new
-                    {
-                        post.Id,
-                        post.Title,
-                        post.Content,
-                        Category = post.Category != null ? post.Category.Label : null,
-                        post.Author.FirstName,
-                        post.Author.LastName,
-                        post.PublicationDate
-                    })
+                     .Select(post => new
+                     {
+                         post.Id,
+                         post.Title,
+                         post.Content,
+                         post.Category,
+                         post.ImageURL,
+                         post.PublicationDate,
+                         Author = new
+                         {
+                             post.Author.Id,
+                             post.Author.FirstName,
+                             post.Author.LastName,
+                             post.Author.ImageURL
+                         }
+                     })
                     .ToList();
 
                 return searchResults.Any() ? Results.Ok(searchResults) : Results.StatusCode(204);
