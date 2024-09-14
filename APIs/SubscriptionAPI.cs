@@ -102,7 +102,6 @@ namespace Rare.APIs
                 db.SaveChanges();
                 return Results.Ok($"Subscription ended on {subscription.EndedOn}");
             });
-
         }
     }
 }
