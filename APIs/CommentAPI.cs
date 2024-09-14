@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Rare.Models;
 
 namespace Rare.APIs
@@ -10,9 +11,24 @@ namespace Rare.APIs
             app.MapGet("/comments/posts/{postId}", (RareDbContext db, int postId) =>
             {
                 var allComments = db.Comments
-                .Include(c => c.Author)
+                .Select(comment => new
+                {
+                    comment.Id,
+                    comment.Content,
+                    comment.PostId,
+                    comment.CreatedOn,
+                    Author = new
+                    {
+                        comment.Author.Id,
+                        comment.Author.FirstName,
+                        comment.Author.LastName,
+                        comment.Author.ImageURL
+                    }
+                })
                 .Where(c => c.PostId == postId)
+                .OrderByDescending(c => c.CreatedOn)
                 .ToList();
+
                 if (allComments.Any())
                 {
                     return Results.Ok(allComments);
@@ -35,13 +51,21 @@ namespace Rare.APIs
 
             app.MapPost("/comments", (RareDbContext db, Comment newComment) =>
             {
-                newComment.CreatedOn = DateTime.Now;
-                db.Comments.Add(newComment);
+                Comment addComment = new()
+                {
+                    AuthorId = newComment.AuthorId,
+                    PostId = newComment.PostId,
+                    Content = newComment.Content,
+                    CreatedOn = DateTime.Now,
+
+
+                };
+                db.Comments.Add(addComment);
                 db.SaveChanges();
-                return Results.Ok(newComment);
+                return Results.Ok(addComment);
             });
 
-            app.MapDelete("/comments/{commentId}", (RareDbContext db, int commentId) =>
+            app.MapDelete("/comments/{commentId}", (RareDbContext db, int addComment) =>
             {
                 Comment removeComment = db.Comments.SingleOrDefault(c => c.Id == commentId);
                 if (removeComment != null)
