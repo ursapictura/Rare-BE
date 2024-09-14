@@ -11,24 +11,24 @@ namespace Rare.APIs
             app.MapGet("/posts", (RareDbContext db) =>
             {
                 return db.Posts
-                    .Select(post => new
-                    {
-                        post.Id,
-                        post.Title,
-                        post.Content,
-                        post.Category,
-                        post.ImageURL,
-                        post.PublicationDate,
-                        Author = new
+                        .Select(post => new
                         {
-                            post.Author.Id,
-                            post.Author.FirstName,
-                            post.Author.LastName,
-                            post.Author.ImageURL
-                        }
-                    })
-                    .OrderByDescending(post => post.PublicationDate)
-                    .ToList();
+                            post.Id,
+                            post.Title,
+                            post.Content,
+                            post.Category,
+                            post.ImageURL,
+                            post.PublicationDate,
+                            Author = new
+                            {
+                                post.Author.Id,
+                                post.Author.FirstName,
+                                post.Author.LastName,
+                                post.Author.ImageURL
+                            }
+                        })
+                        .OrderByDescending(post => post.PublicationDate)
+                        .ToList();
             });
 
             // get single post + post details

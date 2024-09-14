@@ -8,28 +8,41 @@ namespace Rare.APIs
         public static void Map(WebApplication app)
         {
             // Get User Subscriptions
-            app.MapGet("/subscribe/{userId}", (RareDbContext db, int userId) =>
+            app.MapGet("/subscription/{userId}", (RareDbContext db, int userId) =>
             {
-                // Find Active Subscriptions for Current User. Include Author and Author's Posts.
-                var userSubscriptions = db.Subscriptions
-                .Include(s => s.Author)
-                .ThenInclude(a => a.Posts)
-                .Where(s => s.FollowerId == userId)
-                .Where(s => s.EndedOn == null)
-                .ToList();
+                // Get all subscriptions that match FollowerId. Then 
+                var subList = db.Subscriptions
+                    .Where(s => s.FollowerId == userId)
+                    .Select(s => s.AuthorId)
+                    .ToList();
 
-                // If an active subscription cannot be found, return NotFound
-                if (!userSubscriptions.Any())
-                {
-                    return Results.NotFound("No subscriptions found");
-                }
+                var includeAuthorsList = db.Posts
+                                        .Where(p => subList.Contains(p.AuthorId))  
+                                        .Select(post => new
+                                            {
+                                                post.Id,
+                                                post.Title,
+                                                post.Content,
+                                                post.Category,
+                                                post.ImageURL,
+                                                post.PublicationDate,
+                                                Author = new
+                                                {
+                                                    post.Author.Id,
+                                                    post.Author.FirstName,
+                                                    post.Author.LastName,
+                                                    post.Author.ImageURL
+                                                }
+                                            })
+                                        .OrderByDescending(post => post.PublicationDate)
+                                        .ToList();
 
-                return Results.Ok(userSubscriptions);
+                return Results.Ok(includeAuthorsList);
 
             });
 
             // Add New Subscription for User
-            app.MapGet("/subscribe/{authorId}/{userId}", (RareDbContext db, int authorId, int userId) =>
+            app.MapGet("/subscription/{userId}/add/{authorId}", (RareDbContext db, int authorId, int userId) =>
             {
                 User user = db.Users.SingleOrDefault(u => u.Id == authorId);
 
@@ -70,7 +83,7 @@ namespace Rare.APIs
             });
 
             // End a User's subscription
-            app.MapPatch("/subscribe/{authorId}/{userId}", (RareDbContext db, int authorId, int userId) =>
+            app.MapPatch("/subscriptions/{userId}/end/{authorId}", (RareDbContext db, int authorId, int userId) =>
             {
                 // Find User's active subscription to author.
                 var subscription = db.Subscriptions.SingleOrDefault(s => s.AuthorId == authorId
