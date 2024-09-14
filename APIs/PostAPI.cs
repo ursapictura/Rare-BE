@@ -86,6 +86,15 @@ namespace Rare.APIs
             // create post
             app.MapPost("/posts", (RareDbContext db, Post newPost) =>
             {
+                if (!db.Categories.Any(category => category.Id == newPost.CategoryId))
+                {
+                    return Results.NotFound("No category found.");
+                }
+                else if (!db.Users.Any(user => user.Id == newPost.AuthorId))
+                {
+                    return Results.NotFound("No user found.");
+                }
+                
                 Post addPost = new()
                 {
                     AuthorId = newPost.AuthorId,
@@ -107,7 +116,15 @@ namespace Rare.APIs
 
                 if (postToUpdate == null)
                 {
-                    return Results.NotFound();
+                    return Results.NotFound("No post found.");
+                }
+                else if (!db.Categories.Any(category => category.Id == post.CategoryId))
+                {
+                    return Results.NotFound("No category found.");
+                }
+                else if (!db.Users.Any(user => user.Id == post.AuthorId))
+                {
+                    return Results.NotFound("No user found.");
                 }
 
                 postToUpdate.Title = post.Title;
