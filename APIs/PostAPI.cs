@@ -88,11 +88,8 @@ namespace Rare.APIs
             });
 
             // create post
-            app.MapPost("/posts", (RareDbContext db, CreatePostDto postDto) =>
+            app.MapPost("/posts", (RareDbContext db, Post newPost) =>
             {
-                var newPost = postDto.Post;
-
-                var tagIds = postDto.TagIds;
 
                 if (!db.Categories.Any(category => category.Id == newPost.CategoryId))
                 {
@@ -111,19 +108,8 @@ namespace Rare.APIs
                     Content = newPost.Content,
                     PublicationDate = DateTime.Now,
                     ImageURL = newPost.ImageURL,
-                    Tags = new List<Tag>()
                 };
                 db.Posts.Add(addPost);
-
-                if (tagIds != null && tagIds.Any())
-                {
-                    var tags = db.Tags.Where(t => tagIds.Contains(t.Id)).ToList();
-
-                    addPost.Tags.AddRange(tags);
-                }
-
-
-
                 db.SaveChanges();
                 return Results.Created($"posts/{addPost.Id}", addPost);
             });
