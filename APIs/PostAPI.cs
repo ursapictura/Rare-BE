@@ -135,8 +135,9 @@ namespace Rare.APIs
                 postToUpdate.Title = post.Title;
                 postToUpdate.Content = post.Content;
                 postToUpdate.ImageURL = post.ImageURL;
-                postToUpdate.Category = post.Category;
+                postToUpdate.CategoryId = post.CategoryId;
                 postToUpdate.Tags = post.Tags;
+                postToUpdate.AuthorId = post.AuthorId;
 
                 db.SaveChanges();
                 return Results.Ok(postToUpdate);
