@@ -1,7 +1,6 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
 using Rare.APIs;
-using Rare_BE.APIs;
 
 var builder = WebApplication.CreateBuilder(args);
 

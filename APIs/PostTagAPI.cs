@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Rare.Models;
 
-namespace Rare_BE.APIs
+namespace Rare.APIs
 {
     public class PostTagAPI
     {
