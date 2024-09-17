@@ -43,6 +43,7 @@ app.UseCors();
 CategoryAPI.Map(app);
 CommentAPI.Map(app);
 PostAPI.Map(app);
+PostTagAPI.Map(app);
 SubscriptionAPI.Map(app);
 TagAPI.Map(app);
 UserAPI.Map(app);
