@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Rare.Models;
+using Rare_BE.DTOs;
 
 namespace Rare.APIs
 {
@@ -24,6 +25,7 @@ namespace Rare.APIs
                                 post.Author.Id,
                                 post.Author.FirstName,
                                 post.Author.LastName,
+                                post.Author.UserName,
                                 post.Author.ImageURL
                             }
                         })
@@ -60,6 +62,7 @@ namespace Rare.APIs
                         post.Author.Id,
                         post.Author.FirstName,
                         post.Author.LastName,
+                        post.Author.UserName,
                         post.Author.ImageURL
                     },
                     Tags = post.Tags.Select(tag => new
@@ -77,6 +80,7 @@ namespace Rare.APIs
                             comment.Author.Id,
                             comment.Author.FirstName,
                             comment.Author.LastName,
+                            comment.Author.UserName,
                             comment.Author.ImageURL
                         },
                     })
@@ -84,8 +88,12 @@ namespace Rare.APIs
             });
 
             // create post
-            app.MapPost("/posts", (RareDbContext db, Post newPost) =>
+            app.MapPost("/posts", (RareDbContext db, CreatePostDto postDto) =>
             {
+                var newPost = postDto.Post;
+
+                var tagIds = postDto.TagIds;
+
                 if (!db.Categories.Any(category => category.Id == newPost.CategoryId))
                 {
                     return Results.NotFound("No category found.");
@@ -102,9 +110,20 @@ namespace Rare.APIs
                     Title = newPost.Title,
                     Content = newPost.Content,
                     PublicationDate = DateTime.Now,
-                    ImageURL = newPost.ImageURL
+                    ImageURL = newPost.ImageURL,
+                    Tags = new List<Tag>()
                 };
                 db.Posts.Add(addPost);
+
+                if (tagIds != null && tagIds.Any())
+                {
+                    var tags = db.Tags.Where(t => tagIds.Contains(t.Id)).ToList();
+
+                    addPost.Tags.AddRange(tags);
+                }
+
+
+
                 db.SaveChanges();
                 return Results.Created($"posts/{addPost.Id}", addPost);
             });
@@ -170,6 +189,7 @@ namespace Rare.APIs
                         post.Author.Id,
                         post.Author.FirstName,
                         post.Author.LastName,
+                        post.Author.UserName,
                         post.Author.ImageURL
                     }
                 })
@@ -221,6 +241,7 @@ namespace Rare.APIs
                              post.Author.Id,
                              post.Author.FirstName,
                              post.Author.LastName,
+                             post.Author.UserName,
                              post.Author.ImageURL
                          }
                      })
