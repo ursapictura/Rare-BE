@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
 using Rare.APIs;
+using Rare_BE.APIs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +44,7 @@ app.UseCors();
 CategoryAPI.Map(app);
 CommentAPI.Map(app);
 PostAPI.Map(app);
+PostTagAPI.Map(app);
 SubscriptionAPI.Map(app);
 TagAPI.Map(app);
 UserAPI.Map(app);
