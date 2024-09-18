@@ -7,7 +7,7 @@ namespace Rare.APIs
             // get all categories
             app.MapGet("/categories", (RareDbContext db) =>
             {
-                var allCategories = db.Categories.ToList();
+                var allCategories = db.Categories.OrderBy(c => c.Label).ToList();
                 if (allCategories.Any())
                 {
                     return Results.Ok(allCategories);

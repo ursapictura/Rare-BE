@@ -31,6 +31,7 @@ namespace Rare.APIs
                                                     post.Author.Id,
                                                     post.Author.FirstName,
                                                     post.Author.LastName,
+                                                    post.Author.UserName,
                                                     post.Author.ImageURL
                                                 }
                                             })

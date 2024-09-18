@@ -24,6 +24,7 @@ namespace Rare.APIs
                     user.Id,
                     user.FirstName,
                     user.LastName,
+                    user.UserName,
                     user.Bio,
                     user.ImageURL,
                     user.Email,
@@ -59,6 +60,7 @@ namespace Rare.APIs
                 {
                     FirstName = userRegister.FirstName,
                     LastName = userRegister.LastName,
+                    UserName = userRegister.UserName,
                     Bio = userRegister.Bio,
                     ImageURL = userRegister.ImageURL,
                     Email = userRegister.Email,
