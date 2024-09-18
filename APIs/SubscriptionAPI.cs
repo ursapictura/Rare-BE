@@ -102,6 +102,32 @@ namespace Rare.APIs
                 db.SaveChanges();
                 return Results.Ok($"Subscription ended on {subscription.EndedOn}");
             });
+
+            // Check User Subscription Status
+            app.MapGet("subscription/{userId}/{authorId}", (RareDbContext db, int userId, int authorId) =>
+            {
+                bool canSubscribe = true;
+
+                if (userId == authorId)
+                {
+                    canSubscribe = false;
+                    return Results.Ok(canSubscribe);
+                }
+
+                // Find User's active subscription to author.
+                var subscription = db.Subscriptions.SingleOrDefault(s => s.AuthorId == authorId
+                                                                    && s.FollowerId == userId
+                                                                    && s.EndedOn == null);
+
+                // If an active subscription is found, a new subscription cannot be made.
+                if (subscription != null)
+                {
+                    canSubscribe = false;
+                    return Results.Ok(canSubscribe);
+                }
+
+                return Results.Ok(canSubscribe);
+            });
         }
     }
 }
