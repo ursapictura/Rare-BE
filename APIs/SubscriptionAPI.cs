@@ -115,6 +115,19 @@ namespace Rare.APIs
                     return Results.Ok(canSubscribe);
                 }
 
+                var userExists = db.Users.SingleOrDefault(u => u.Id == userId);
+                var authorExists = db.Users.SingleOrDefault(u => u.Id == authorId);
+
+                if (userExists == null)
+                {
+                    return Results.NotFound("The userId does not exist");
+                }
+
+                if (authorExists == null)
+                {
+                    return Results.NotFound("The authorId does not exist");
+                }
+
                 // Find User's active subscription to author.
                 var subscription = db.Subscriptions.SingleOrDefault(s => s.AuthorId == authorId
                                                                     && s.FollowerId == userId
