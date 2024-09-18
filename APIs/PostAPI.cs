@@ -70,7 +70,9 @@ namespace Rare.APIs
                         tag.Id,
                         tag.Label
                     }),
-                    Comments = post.Comments.Select(comment => new
+                    Comments = post.Comments
+                        .OrderBy(c => c.CreatedOn)
+                        .Select(comment => new
                     {
                         comment.Id,
                         comment.Content,
