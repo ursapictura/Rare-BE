@@ -70,7 +70,9 @@ namespace Rare.APIs
                         tag.Id,
                         tag.Label
                     }),
-                    Comments = post.Comments.Select(comment => new
+                    Comments = post.Comments
+                        .OrderBy(c => c.CreatedOn)
+                        .Select(comment => new
                     {
                         comment.Id,
                         comment.Content,
@@ -136,7 +138,6 @@ namespace Rare.APIs
                 postToUpdate.Content = post.Content;
                 postToUpdate.ImageURL = post.ImageURL;
                 postToUpdate.CategoryId = post.CategoryId;
-                postToUpdate.Tags = post.Tags;
                 postToUpdate.AuthorId = post.AuthorId;
 
                 db.SaveChanges();
