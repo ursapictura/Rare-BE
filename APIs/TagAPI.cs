@@ -12,7 +12,8 @@ namespace Rare.APIs
                 {
                     t.Id,
                     t.Label
-                });
+                })
+                .OrderBy(t => t.Label);
             });
 
             app.MapPost("/tags", (RareDbContext db, Tag addTag) =>
