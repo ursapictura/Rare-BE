@@ -190,16 +190,7 @@ namespace Rare.APIs
                 }
                 else
                 {
-                    bool categoryExist = db.Categories.Any(c => c.Id == categoryId);
-                    if (categoryExist)
-                    {
-                        return Results.Ok($"There are no post for this category with an id of {categoryId}");
-
-                    }
-                    else
-                    {
-                        return Results.NotFound($"There is no category with an id of {categoryId}");
-                    }
+                    return Results.Ok(new List<object>());
                 }
             });
 
