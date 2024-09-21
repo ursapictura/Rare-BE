@@ -207,28 +207,27 @@ namespace Rare.APIs
                         post.PublicationDate.ToString().Contains(searchValue) ||
                         post.Tags.Any(tag => tag.Label.ToLower().Contains(searchValue.ToLower()))
                     )
-                     .Select(post => new
-                     {
-                         post.Id,
-                         post.Title,
-                         post.Content,
-                         post.Category,
-                         post.ImageURL,
-                         post.PublicationDate,
-                         Author = new
-                         {
-                             post.Author.Id,
-                             post.Author.FirstName,
-                             post.Author.LastName,
-                             post.Author.UserName,
-                             post.Author.ImageURL
-                         }
-                     })
+                    .Select(post => new
+                    {
+                        post.Id,
+                        post.Title,
+                        post.Content,
+                        post.Category,
+                        post.ImageURL,
+                        post.PublicationDate,
+                        Author = new
+                        {
+                            post.Author.Id,
+                            post.Author.FirstName,
+                            post.Author.LastName,
+                            post.Author.UserName,
+                            post.Author.ImageURL
+                        }
+                    })
                     .ToList();
 
-                return searchResults.Any() ? Results.Ok(searchResults) : Results.StatusCode(204);
+                return Results.Ok(searchResults);
             });
-                   
         }
     }
 }
