@@ -19,7 +19,7 @@ User's have full CRUD capabilities on their own content, so previously published
 <a href="https://github.com/ursapictura/Rare-FE">Check out the client-side repo!</a>
 </p>
 
-<h2 id="technologies">💻 Technologies</h2>
+<h2 id="tech">💻 Technologies</h2>
 
 - C#
 - .NET
@@ -144,3 +144,7 @@ Here you can list the main routes of your API, and what are their expected reque
 
 </tr>
 </table>
+
+<h3>📝 Helpful Documentation</h3>
+
+[Client-Side UI for this project](https://github.com/ursapictura/Rare-FE)
